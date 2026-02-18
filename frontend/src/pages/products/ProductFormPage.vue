@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import MainLayout from '@/components/layout/MainLayout.vue'
+import OCRScanner from '@/components/shared/OCRScanner.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productApi, categoryApi, supplierApi, toCamel } from '@/services/api'
 import type { Product, Category, Supplier } from '@/types'
@@ -155,11 +156,89 @@ async function handleSubmit() {
   }
 }
 
+// OCR Logic
+const showScanner = ref(false)
+
+function onScanComplete(data: any) {
+  // Handle new array format (take first item)
+  if (data.products && Array.isArray(data.products)) {
+    data = data.products[0] || {}
+  }
+
+  if (data.product_name) form.value.name = data.product_name
+  
+  if (data.price) {
+    const cleanPrice = String(data.price).replace(/\D/g, '')
+    form.value.price = parseInt(cleanPrice) || 0
+  }
+  
+  if (data.quantity) form.value.stock = Number(data.quantity) || 0
+  
+  // Try matching category
+  if (data.category && categories.value.length > 0) {
+    const search = data.category.toLowerCase()
+    const cat = categories.value.find(c => 
+      c.name.toLowerCase().includes(search) || 
+      search.includes(c.name.toLowerCase())
+    )
+    if (cat) form.value.categoryId = cat.id
+  }
+
+  // Try matching supplier
+  if (data.supplier && suppliers.value.length > 0) {
+    const search = data.supplier.toLowerCase()
+    const sup = suppliers.value.find(s => 
+      s.name.toLowerCase().includes(search) || 
+      search.includes(s.name.toLowerCase())
+    )
+    if (sup) form.value.supplierId = sup.id
+  }
+
+  if (typeof data.expiry_date === 'string') {
+    const existingDesc = form.value.description ? form.value.description + '\n' : ''
+    form.value.description = `${existingDesc}Kadaluarsa: ${data.expiry_date}`
+  }
+
+  showScanner.value = false
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 </script>
 
 <template>
   <MainLayout>
     <div class="max-w-3xl mx-auto space-y-6">
+      
+      <!-- OCR Scanner Section -->
+      <div v-if="!isEdit" class="space-y-4">
+        <div v-if="!showScanner" class="flex justify-end">
+          <button 
+            @click="showScanner = true"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7" /><line x1="16" y1="5" x2="22" y2="5" /><line x1="19" y1="2" x2="19" y2="8" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+            </svg>
+            Scan Foto/Struk dengan AI
+          </button>
+        </div>
+
+        <div v-if="showScanner" class="rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.03] p-4 animate-in fade-in slide-in-from-top-2">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <svg class="text-indigo-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+              <h3 class="text-sm font-semibold text-slate-800 dark:text-white">AI Scanner</h3>
+            </div>
+            <button @click="showScanner = false" class="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <OCRScanner @scan-complete="onScanComplete" />
+        </div>
+      </div>
+
+      
+
+
       <!-- Header -->
       <div class="flex items-center gap-4">
         <button @click="router.back()" class="p-2 rounded-lg border border-slate-200 dark:border-white/[0.08] text-slate-500 dark:text-white/40 hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-all cursor-pointer">

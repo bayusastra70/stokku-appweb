@@ -11,4 +11,6 @@ export const env = {
   DB_PASSWORD: process.env.DB_PASSWORD || "",
   JWT_SECRET: process.env.JWT_SECRET || "stokku-secret-key",
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "7d",
+  NVIDIA_API_KEY: process.env.NVIDIA_API_KEY,
+  MODEL_ID: process.env.MODEL_ID,
 };

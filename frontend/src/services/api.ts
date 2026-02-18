@@ -252,3 +252,15 @@ export const dashboardApi = {
   getActivity: (limit = 10) =>
     request<any[]>(`/dashboard/activity?limit=${limit}`),
 };
+
+// --- OCR ---
+export const ocrApi = {
+  scan: (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    return request<{ success: boolean; data: any }>("/ocr/scan", {
+      method: "POST",
+      body: formData,
+    });
+  },
+};

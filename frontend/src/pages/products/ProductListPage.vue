@@ -114,14 +114,24 @@ function onSearchInput() {
           <h2 class="text-xl font-bold text-slate-800 dark:text-white">Daftar Produk</h2>
           <p class="text-sm text-slate-400 dark:text-white/40 mt-0.5">Kelola semua produk inventaris toko</p>
         </div>
-        <button
-          v-if="authStore.hasRole(['admin', 'manager'])"
-          @click="router.push('/products/add')"
+        <div class="flex gap-2">
+          <button
+            v-if="authStore.hasRole(['admin', 'manager'])"
+            @click="router.push('/products/scan')"
+            class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium text-sm rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all cursor-pointer"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+            Scan Struk
+          </button>
+          <button
+            v-if="authStore.hasRole(['admin', 'manager'])"
+            @click="router.push('/products/add')"
           class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-medium text-sm rounded-xl hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-lg shadow-indigo-500/25 cursor-pointer"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Tambah Produk
         </button>
+        </div>
       </div>
       <!-- Filters Bar -->
       <div class="flex flex-col sm:flex-row gap-3">

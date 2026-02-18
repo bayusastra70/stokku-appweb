@@ -10,6 +10,7 @@ Stokku is a modern web-based inventory management application designed to help b
 - **Reports & Export**: Generate detailed inventory reports with export functionality to Excel (.xlsx).
 - **User Management**: Role-based access control (Admin, Manager, Staff).
 - **Low Stock Alerts**: Automatic warnings for products reaching minimum stock thresholds.
+- **OCR Integration**: Scan product images to extract text and automatically fill product details.
 
 ## 🛠️ Tech Stack
 
