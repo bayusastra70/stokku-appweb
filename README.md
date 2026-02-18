@@ -45,7 +45,7 @@ Before you begin, ensure you have met the following requirements:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/username/stokku-app.git
+git clone https://github.com/ikhwanand/stokku-app.git
 cd stokku-app
 ```
 
